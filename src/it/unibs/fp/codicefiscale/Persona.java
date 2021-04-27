@@ -1,6 +1,7 @@
 package it.unibs.fp.codicefiscale;
 
 public class Persona {
+
 	private String nome;
 	private String cognome;
 	private String sesso;
@@ -54,6 +55,12 @@ public class Persona {
 
 	public void setDataDiNascita(String dataDiNascita) {
 		this.dataDiNascita = dataDiNascita;
+	}
+	
+	@Override
+	public String toString() {
+		return "Persona [nome=" + nome + ", cognome=" + cognome + ", sesso=" + sesso + ", comune=" + comune
+				+ ", dataDiNascita=" + dataDiNascita + "]";
 	}
 
 }

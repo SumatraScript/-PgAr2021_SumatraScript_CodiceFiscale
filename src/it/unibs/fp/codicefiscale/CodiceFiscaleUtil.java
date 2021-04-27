@@ -10,27 +10,25 @@ public class CodiceFiscaleUtil {
 	public static String nomeCognome(String input) {
 		String output = new String();
 		input.toUpperCase();
-		int counter=0;
+		int counter = 0;
 		for (int i = 0; i < input.length(); i++) {
 			char ch = input.charAt(i);
-			if (ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U' && ch!='Y' && counter<3) {
+			if (ch != 'A' && ch != 'E' && ch != 'I' && ch != 'O' && ch != 'U' && ch != 'Y' && counter < 3) {
 				output = output + ch;
 				counter++;
 			}
 		}
+			
 		if (output.length() < 3 && input.length() < 3) {
 			while (output.length() != 3) {
 				output = output + 'X';
 			}
 		} else if (output.length() < 3) {
-			boolean trovato = false;
 			for (int i = 0; i < input.length(); i++) {
 				char ch = input.charAt(i);
-				if (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U') {
-					if (trovato == false) {
+				if (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U' || ch == 'Y') {
+					if(output.length()<3)
 						output = output + ch;
-						trovato = true;
-					}
 				}
 			}
 		}
@@ -76,11 +74,11 @@ public class CodiceFiscaleUtil {
 
 	/**
 	 * Metodo che permette il del giorno di nascita con Si prendono le due cifre del
-	 * giorno di nascita (se è compreso tra 1 e 9 si pone uno zero come prima
+	 * giorno di nascita (se ï¿½ compreso tra 1 e 9 si pone uno zero come prima
 	 * cifra); per i soggetti di sesso femminile, a tale cifra va sommato il numero
 	 * 40. In questo modo il campo contiene la doppia informazione giorno di nascita
 	 * e sesso. Avremo pertanto la seguente casistica: i maschi avranno il giorno
-	 * con cifra da 01 a 31, mentre per le donne la cifra relativa al giorno sarà da
+	 * con cifra da 01 a 31, mentre per le donne la cifra relativa al giorno sarï¿½ da
 	 * 41 a 71.
 	 */
 	public static String giornoDiNascita(String input, String sesso) {
@@ -104,8 +102,8 @@ public class CodiceFiscaleUtil {
 	 */
 	public static String comuneDiNascita(ArrayList<Comune> comuni, String input) {
 		String output = new String();
-		// inserisco un boolean perchè mi serve per controllare se il comune che si sta
-		// cercando è presente nella lista di comuni
+		// inserisco un boolean perchï¿½ mi serve per controllare se il comune che si sta
+		// cercando ï¿½ presente nella lista di comuni
 		boolean trovato = false;
 		// controllo sulle corrispondenze dei nomi per estrapolare il carattere
 		for (int i = 0; i < comuni.size(); i++) {
@@ -118,13 +116,6 @@ public class CodiceFiscaleUtil {
 			return output;
 		else
 			return "Errore comune non presente";
-	}
-	/**
-	 * Metdo di suppoto al metodo per la generazione del codice di controllo
-	 */
-	public static String codiceSenzaControllo(String cognome, String nome, String dataDiNascita, String giornoDiNascita,
-			String comuneDiNascita) {
-		return cognome + nome + dataDiNascita + giornoDiNascita + comuneDiNascita;
 	}
 
 	/**
@@ -147,8 +138,6 @@ public class CodiceFiscaleUtil {
 			else
 				pari = pari + carattereDiControlloPari(input.charAt(i));
 		}
-		System.out.println(pari);
-		System.out.println(dispari);
 		risultato = (pari + dispari) % 26;
 		output = output + carattereDiControlloRisultato(risultato);
 		return output;
@@ -363,5 +352,21 @@ public class CodiceFiscaleUtil {
 		else if (input == 25)
 			val = 'Z';
 		return val;
+	}
+
+	public static ArrayList<String> creaCodiceFiscale(ArrayList<Persona> persone, ArrayList<Comune> comuni) {
+		ArrayList<String> codici_fiscali=new ArrayList<String>();
+		for(int i=0;i<persone.size();i++) {
+			String codice_cognome = nomeCognome(persone.get(i).getCognome());
+			String codice_nome = nomeCognome(persone.get(i).getNome());
+			String data_di_nascita = dataDiNascita(persone.get(i).getDataDiNascita());
+			String giorno_di_nascita_sesso = giornoDiNascita(persone.get(i).getDataDiNascita(), persone.get(i).getSesso());
+			String codice_comune_di_nascita = comuneDiNascita(comuni, persone.get(i).getComune());
+			String codice_senza_controllo=codice_cognome+codice_nome+data_di_nascita+giorno_di_nascita_sesso+codice_comune_di_nascita;
+			String codice_di_controllo=carattereDiControllo(codice_senza_controllo);
+			String codice_fiscale=codice_senza_controllo+codice_di_controllo;
+			codici_fiscali.add(codice_fiscale);
+		}
+		return codici_fiscali;
 	}
 }
