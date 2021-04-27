@@ -25,10 +25,19 @@ public class CodiceFiscaleMain {
 //		System.out.println(CodiceFiscaleUtil.carattereDiControllo(tot));
 		ArrayList<Persona> persone = XmlReader.readerPersona();
 		ArrayList<Comune> comuni = XmlReader.readerComuni();
-		ArrayList<String> codici_fiscali = CodiceFiscaleUtil.creaCodiceFiscale(persone, comuni) ;
-		for(int i=0;i<codici_fiscali.size();i++) {
-			System.out.println(codici_fiscali.get(i));
-		}
+		ArrayList<String> codici_fiscali_ottenuti = CodiceFiscaleUtil.creaCodiceFiscale(persone, comuni) ;
+		String mycode="ZNGDLN01D20B157C";
+		System.out.println(CodiceFiscaleUtil.controlloValidità(mycode));
+		System.out.println(mycode.substring(9,11));
+//		for(int i=0;i<codici_fiscali.size();i++) {
+//			System.out.println(codici_fiscali.get(i));
+//		}
+//		ArrayList<String> codici_fiscali_prelevati = XmlReader.readerCodiciFiscali();
+//		
+//		ArrayList<String> codici_fiscali_errati=XmlCompare.codiciFiscaliCompare(codici_fiscali_ottenuti,codici_fiscali_prelevati,persone);
+//		for(int i=0;i<codici_fiscali_errati.size();i++) {
+//			System.out.println(codici_fiscali_errati.get(i));
+//		}
 	}
 
 }

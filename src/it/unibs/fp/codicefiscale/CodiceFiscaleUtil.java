@@ -18,7 +18,7 @@ public class CodiceFiscaleUtil {
 				counter++;
 			}
 		}
-			
+
 		if (output.length() < 3 && input.length() < 3) {
 			while (output.length() != 3) {
 				output = output + 'X';
@@ -27,7 +27,7 @@ public class CodiceFiscaleUtil {
 			for (int i = 0; i < input.length(); i++) {
 				char ch = input.charAt(i);
 				if (ch == 'A' || ch == 'E' || ch == 'I' || ch == 'O' || ch == 'U' || ch == 'Y') {
-					if(output.length()<3)
+					if (output.length() < 3)
 						output = output + ch;
 				}
 			}
@@ -78,8 +78,8 @@ public class CodiceFiscaleUtil {
 	 * cifra); per i soggetti di sesso femminile, a tale cifra va sommato il numero
 	 * 40. In questo modo il campo contiene la doppia informazione giorno di nascita
 	 * e sesso. Avremo pertanto la seguente casistica: i maschi avranno il giorno
-	 * con cifra da 01 a 31, mentre per le donne la cifra relativa al giorno sarï¿½ da
-	 * 41 a 71.
+	 * con cifra da 01 a 31, mentre per le donne la cifra relativa al giorno sarï¿½
+	 * da 41 a 71.
 	 */
 	public static String giornoDiNascita(String input, String sesso) {
 		String output = new String();
@@ -102,7 +102,8 @@ public class CodiceFiscaleUtil {
 	 */
 	public static String comuneDiNascita(ArrayList<Comune> comuni, String input) {
 		String output = new String();
-		// inserisco un boolean perchï¿½ mi serve per controllare se il comune che si sta
+		// inserisco un boolean perchï¿½ mi serve per controllare se il comune che si
+		// sta
 		// cercando ï¿½ presente nella lista di comuni
 		boolean trovato = false;
 		// controllo sulle corrispondenze dei nomi per estrapolare il carattere
@@ -355,18 +356,120 @@ public class CodiceFiscaleUtil {
 	}
 
 	public static ArrayList<String> creaCodiceFiscale(ArrayList<Persona> persone, ArrayList<Comune> comuni) {
-		ArrayList<String> codici_fiscali=new ArrayList<String>();
-		for(int i=0;i<persone.size();i++) {
+		ArrayList<String> codici_fiscali = new ArrayList<String>();
+		for (int i = 0; i < persone.size(); i++) {
 			String codice_cognome = nomeCognome(persone.get(i).getCognome());
 			String codice_nome = nomeCognome(persone.get(i).getNome());
-			String data_di_nascita = dataDiNascita(persone.get(i).getDataDiNascita());
-			String giorno_di_nascita_sesso = giornoDiNascita(persone.get(i).getDataDiNascita(), persone.get(i).getSesso());
+			String data_di_nascita = dataDiNascita(persone.get(i).getData_di_nascita());
+			String giorno_di_nascita_sesso = giornoDiNascita(persone.get(i).getData_di_nascita(),
+					persone.get(i).getSesso());
 			String codice_comune_di_nascita = comuneDiNascita(comuni, persone.get(i).getComune());
-			String codice_senza_controllo=codice_cognome+codice_nome+data_di_nascita+giorno_di_nascita_sesso+codice_comune_di_nascita;
-			String codice_di_controllo=carattereDiControllo(codice_senza_controllo);
-			String codice_fiscale=codice_senza_controllo+codice_di_controllo;
+			String codice_senza_controllo = codice_cognome + codice_nome + data_di_nascita + giorno_di_nascita_sesso
+					+ codice_comune_di_nascita;
+			String codice_di_controllo = carattereDiControllo(codice_senza_controllo);
+			String codice_fiscale = codice_senza_controllo + codice_di_controllo;
 			codici_fiscali.add(codice_fiscale);
 		}
 		return codici_fiscali;
+	}
+
+	public static boolean controlloValidità(String codice_fiscale_prelevato) {
+		boolean controllo = false;
+		if (codice_fiscale_prelevato.length() == 16) {
+			// controllo le posizioni dei caratteri
+			if (codice_fiscale_prelevato.substring(0, 6).matches("^[A-Z]*$")
+					&& codice_fiscale_prelevato.substring(8, 9).matches("^[A-Z]*$")
+					&& codice_fiscale_prelevato.substring(15, 16).matches("^[A-Z]*$")) {
+				// controllo che i valori della data di nascita siano compresi tra 1-31 e 41-71
+				//Attento controlla il range
+				if (codice_fiscale_prelevato.substring(9, 11).matches("^[1-31][41-71]*$")) {
+					// controllo la validità del mese
+					if (codice_fiscale_prelevato.substring(8, 9).matches("[A, B, C, D, E, H, L, M, P, R, S, T]")) {
+						// controllo la validità carattere di controllo
+						if (CodiceFiscaleUtil.carattereDiControllo(codice_fiscale_prelevato.substring(0, 15))
+								.equals(codice_fiscale_prelevato.substring(15, 16))) {
+							// controllo validità mese giorno
+							if (validitaMeseGiorno(codice_fiscale_prelevato.substring(8, 9),
+									codice_fiscale_prelevato.substring(9, 11))) {
+								controllo = true;
+							}
+						}
+
+					}
+				}
+			}
+
+		} else
+			controllo = false;
+		return controllo;
+	}
+
+	/**
+	 * Metodo per il controllo della validità reciproca tra mese e giorno
+	 */
+	private static boolean validitaMeseGiorno(String mese, String giorno) {
+		boolean controllo = false;
+		// gennaio
+		if (mese.equals("A")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// febbraio
+		else if (mese.equals("B")) {
+			if (giorno.matches("^[1-28][41-68]]*$"))
+				controllo = true;
+		}
+		// marzo
+		else if (mese.equals("C")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// aprile
+		else if (mese.equals("D")) {
+			if (giorno.matches("^[1-30][41-70]*$"))
+				controllo = true;
+		}
+		// maggio
+		else if (mese.equals("E")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// giugno
+		else if (mese.equals("H")) {
+			if (giorno.matches("^[1-30][41-70]]*$"))
+				controllo = true;
+		}
+		// luglio
+		else if (mese.equals("L")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// agosto
+		else if (mese.equals("M")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// settembre
+		else if (mese.equals("P")) {
+			if (giorno.matches("^[1-30][41-70]*$"))
+				controllo = true;
+		}
+		// ottobre
+		else if (mese.equals("R")) {
+			if (giorno.matches("^[1-31][41-71]*$"))
+				controllo = true;
+		}
+		// novembre
+		else if (mese.equals("S")) {
+			if (giorno.matches("^[1-30][41-70]*$"))
+				controllo = true;
+		}
+		// dicembre
+		else if (mese.equals("T")) {
+			if (giorno.matches("^[1-31][41-71]]*$"))
+				controllo = true;
+		} else
+			controllo = false;
+		return controllo;
 	}
 }

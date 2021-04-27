@@ -147,4 +147,41 @@ public class XmlReader {
 		}
 		return comuni;
 	}
+	
+	public static ArrayList<String> readerCodiciFiscali() {
+		File input = new File("src//xml//codiciFiscali.xml");
+		String codice = new String();
+		ArrayList<String> codici = new ArrayList<String>();
+		XMLInputFactory xmlif = XMLInputFactory.newFactory();
+		XMLStreamReader xmlr = null;
+		
+		try {
+			xmlr = xmlif.createXMLStreamReader(new FileInputStream(input));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			while (xmlr.hasNext()) {
+				if (xmlr.getEventType() == XMLStreamConstants.START_ELEMENT) {
+					// lettura codice e inizializzazione in un array di string
+					if (xmlr.getLocalName().equals("codice")) {
+						xmlr.next();
+						if (xmlr.getEventType() == XMLStreamConstants.CHARACTERS) {
+							codice = xmlr.getText();
+							codici.add(codice);
+						}
+					}
+				}
+				xmlr.next();
+			}
+		}
+		catch (XMLStreamException e) {
+			e.printStackTrace();
+		}
+		return codici;
+	}
 }

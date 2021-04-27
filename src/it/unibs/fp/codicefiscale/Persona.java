@@ -6,15 +6,32 @@ public class Persona {
 	private String cognome;
 	private String sesso;
 	private String comune;
-	private String dataDiNascita;
+	private String data_di_nascita;
+	private String codice_fiscale;
 
-	public Persona(String nome, String cognome, String sesso, String comune, String dataDiNascita) {
+	public Persona(String nome, String cognome, String sesso, String comune, String data_di_nascita) {
 		super();
 		this.nome = nome;
 		this.cognome = cognome;
 		this.sesso = sesso;
 		this.comune = comune;
-		this.dataDiNascita = dataDiNascita;
+		this.data_di_nascita = data_di_nascita;
+	}
+
+	public String getData_di_nascita() {
+		return data_di_nascita;
+	}
+
+	public void setData_di_nascita(String data_di_nascita) {
+		this.data_di_nascita = data_di_nascita;
+	}
+
+	public String getCodice_fiscale() {
+		return codice_fiscale;
+	}
+
+	public void setCodice_fiscale(String codice_fiscale) {
+		this.codice_fiscale = codice_fiscale;
 	}
 
 	public String getNome() {
@@ -48,19 +65,11 @@ public class Persona {
 	public void setComune(String comune) {
 		this.comune = comune;
 	}
-
-	public String getDataDiNascita() {
-		return dataDiNascita;
-	}
-
-	public void setDataDiNascita(String dataDiNascita) {
-		this.dataDiNascita = dataDiNascita;
-	}
 	
 	@Override
 	public String toString() {
 		return "Persona [nome=" + nome + ", cognome=" + cognome + ", sesso=" + sesso + ", comune=" + comune
-				+ ", dataDiNascita=" + dataDiNascita + "]";
+				+ ", data_di_nascita=" + data_di_nascita + "]";
 	}
 
 }
