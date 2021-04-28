@@ -359,8 +359,7 @@ public class CodiceFiscaleUtil {
 	 * Metodo per la creazione del codice fiscale a partire dalle persone e dai
 	 * comuni
 	 */
-	public static ArrayList<String> creaCodiceFiscale(ArrayList<Persona> persone, ArrayList<Comune> comuni) {
-		ArrayList<String> codici_fiscali = new ArrayList<String>();
+	public static void creaCodiceFiscale(ArrayList<Persona> persone, ArrayList<Comune> comuni) {
 		for (int i = 0; i < persone.size(); i++) {
 			String codice_cognome = nomeCognome(persone.get(i).getCognome());
 			String codice_nome = nomeCognome(persone.get(i).getNome());
@@ -372,9 +371,8 @@ public class CodiceFiscaleUtil {
 					+ codice_comune_di_nascita;
 			String codice_di_controllo = carattereDiControllo(codice_senza_controllo);
 			String codice_fiscale = codice_senza_controllo + codice_di_controllo;
-			codici_fiscali.add(codice_fiscale);
+			persone.get(i).setCodice_fiscale(codice_fiscale);
 		}
-		return codici_fiscali;
 	}
 
 	/**
@@ -487,7 +485,10 @@ public class CodiceFiscaleUtil {
 			controllo = false;
 		return controllo;
 	}
-
+	
+	/**
+	 * Metodo per la ricerca dei codici invalidi dal file xml
+	 */
 	public static ArrayList<String> cercaInvalidi(ArrayList<String> codici_fiscali_prelevati) {
 		ArrayList<String> invalidi = new ArrayList<String>();
 		for (int i = 0; i < codici_fiscali_prelevati.size(); i++) {
@@ -496,8 +497,29 @@ public class CodiceFiscaleUtil {
 		}
 		return invalidi;
 	}
-
+	
+	/**
+	 * Metodo per la ricerca dei codici spaiati dal file xml
+	 */
 	public static ArrayList<String> cercaSpaiati(ArrayList<String> codici_fiscali_prelevati, ArrayList<Persona> persone) {
+		ArrayList<String> spaiati = new ArrayList<String>();
+		boolean trovato = false;
+		for (int i = 0; i < codici_fiscali_prelevati.size(); i++, trovato = false) {
+			for (int j = 0; j < persone.size() && !trovato; j++) {
+				if (codici_fiscali_prelevati.equals(persone.get(j).getCodice_fiscale())) {
+					trovato = true;
+				}
+			}
+			if (!trovato)
+				spaiati.add(codici_fiscali_prelevati.get(i));
+		}
+		return spaiati;
+	}
+	
+	/**
+	 * Metodo per la ricerca dei codici spaiati dal file xml
+	 */
+	public static ArrayList<String> assegnamentoCodicePersona(ArrayList<String> codici_fiscali_prelevati, ArrayList<Persona> persone) {
 		ArrayList<String> spaiati = new ArrayList<String>();
 		boolean trovato = false;
 		for (int i = 0; i < codici_fiscali_prelevati.size(); i++, trovato = false) {

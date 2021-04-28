@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class XmlWriter {
-	public static void esecuzioneScritturaCodiciPersone(ArrayList<Persona> persone, ArrayList<String> codici_fiscali_prelevati, ArrayList<Comune> comuni) {
+	public static void writerCodiciPersone(ArrayList<Persona> persone, ArrayList<String> codici_fiscali_prelevati, ArrayList<Comune> comuni) {
 		XMLOutputFactory xmlof = null;
 		XMLStreamWriter xmlw = null;
 		try {
@@ -47,7 +47,7 @@ public class XmlWriter {
 
 				xmlw.writeCharacters("\n\t\t\t");
 				xmlw.writeStartElement("comune_nascita");
-				xmlw.writeCharacters(persone.get(i).getComune().getNome);
+				xmlw.writeCharacters(persone.get(i).getComune());
 				xmlw.writeEndElement();
 
 				xmlw.writeCharacters("\n\t\t\t");
