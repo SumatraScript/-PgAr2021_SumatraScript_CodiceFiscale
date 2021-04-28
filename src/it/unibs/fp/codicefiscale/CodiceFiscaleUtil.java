@@ -74,7 +74,7 @@ public class CodiceFiscaleUtil {
 
 	/**
 	 * Metodo che permette il del giorno di nascita con Si prendono le due cifre del
-	 * giorno di nascita (se ï¿½ compreso tra 1 e 9 si pone uno zero come prima
+	 * giorno di nascita (se è compreso tra 1 e 9 si pone uno zero come prima
 	 * cifra); per i soggetti di sesso femminile, a tale cifra va sommato il numero
 	 * 40. In questo modo il campo contiene la doppia informazione giorno di nascita
 	 * e sesso. Avremo pertanto la seguente casistica: i maschi avranno il giorno
@@ -355,6 +355,10 @@ public class CodiceFiscaleUtil {
 		return val;
 	}
 
+	/**
+	 * Metodo per la creazione del codice fiscale a partire dalle persone e dai
+	 * comuni
+	 */
 	public static ArrayList<String> creaCodiceFiscale(ArrayList<Persona> persone, ArrayList<Comune> comuni) {
 		ArrayList<String> codici_fiscali = new ArrayList<String>();
 		for (int i = 0; i < persone.size(); i++) {
@@ -373,32 +377,31 @@ public class CodiceFiscaleUtil {
 		return codici_fiscali;
 	}
 
-	public static boolean controlloValidità(String codice_fiscale_prelevato) {
+	/**
+	 * Metodo per il controllo della validità del codice fiscale
+	 */
+	public static boolean controlloValidità(String codice_fiscale) {
 		boolean controllo = false;
-		if (codice_fiscale_prelevato.length() == 16) {
-			// controllo le posizioni dei caratteri
-			if (codice_fiscale_prelevato.substring(0, 6).matches("^[A-Z]*$")
-					&& codice_fiscale_prelevato.substring(8, 9).matches("^[A-Z]*$")
-					&& codice_fiscale_prelevato.substring(15, 16).matches("^[A-Z]*$")) {
+		if (codice_fiscale.length() == 16) {
+			// controllo le posizioni dei caratteri nel codice fiscale
+			if (codice_fiscale.matches(
+					"[A-Z]{6}[0-9L-N-P-V]{2}[A-DEHLMPR-T]{1}[1-7L-N-P-T]{1}[0-9-L-N-P-V]{1}[A-Z]{1}[0-9L-N-P-V]{3}[A-Z]{1}")) {
 				// controllo che i valori della data di nascita siano compresi tra 1-31 e 41-71
-				//Attento controlla il range
-				if (codice_fiscale_prelevato.substring(9, 11).matches("^[1-31][41-71]*$")) {
-					// controllo la validità del mese
-					if (codice_fiscale_prelevato.substring(8, 9).matches("[A, B, C, D, E, H, L, M, P, R, S, T]")) {
+				// Attento controlla il range
+				if (!((Integer.parseInt(codice_fiscale.substring(9, 11)) < 1)
+						|| (Integer.parseInt(codice_fiscale.substring(9, 11)) > 31
+								&& Integer.parseInt(codice_fiscale.substring(9, 11)) < 41)
+						|| (Integer.parseInt(codice_fiscale.substring(9, 11)) > 71))) {
+					// controllo la validità del mese e del giorno
+					if (validitaMeseGiorno(codice_fiscale.substring(8, 9), codice_fiscale.substring(9, 11))) {
 						// controllo la validità carattere di controllo
-						if (CodiceFiscaleUtil.carattereDiControllo(codice_fiscale_prelevato.substring(0, 15))
-								.equals(codice_fiscale_prelevato.substring(15, 16))) {
-							// controllo validità mese giorno
-							if (validitaMeseGiorno(codice_fiscale_prelevato.substring(8, 9),
-									codice_fiscale_prelevato.substring(9, 11))) {
-								controllo = true;
-							}
+						if (CodiceFiscaleUtil.carattereDiControllo(codice_fiscale.substring(0, 15))
+								.equals(codice_fiscale.substring(15, 16))) {
+							controllo = true;
 						}
-
 					}
 				}
 			}
-
 		} else
 			controllo = false;
 		return controllo;
@@ -411,65 +414,101 @@ public class CodiceFiscaleUtil {
 		boolean controllo = false;
 		// gennaio
 		if (mese.equals("A")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// febbraio
 		else if (mese.equals("B")) {
-			if (giorno.matches("^[1-28][41-68]]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 28 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 68)))
 				controllo = true;
 		}
 		// marzo
 		else if (mese.equals("C")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// aprile
 		else if (mese.equals("D")) {
-			if (giorno.matches("^[1-30][41-70]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 30 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 70)))
 				controllo = true;
 		}
 		// maggio
 		else if (mese.equals("E")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// giugno
 		else if (mese.equals("H")) {
-			if (giorno.matches("^[1-30][41-70]]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 30 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 70)))
 				controllo = true;
 		}
 		// luglio
 		else if (mese.equals("L")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// agosto
 		else if (mese.equals("M")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// settembre
 		else if (mese.equals("P")) {
-			if (giorno.matches("^[1-30][41-70]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 30 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 70)))
 				controllo = true;
 		}
 		// ottobre
 		else if (mese.equals("R")) {
-			if (giorno.matches("^[1-31][41-71]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		}
 		// novembre
 		else if (mese.equals("S")) {
-			if (giorno.matches("^[1-30][41-70]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 30 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 70)))
 				controllo = true;
 		}
 		// dicembre
 		else if (mese.equals("T")) {
-			if (giorno.matches("^[1-31][41-71]]*$"))
+			if (!((Integer.parseInt(giorno) < 1) || (Integer.parseInt(giorno) > 31 && Integer.parseInt(giorno) < 41)
+					|| (Integer.parseInt(giorno) > 71)))
 				controllo = true;
 		} else
 			controllo = false;
 		return controllo;
+	}
+
+	public static ArrayList<String> cercaInvalidi(ArrayList<String> codici_fiscali_prelevati) {
+		ArrayList<String> invalidi = new ArrayList<String>();
+		for (int i = 0; i < codici_fiscali_prelevati.size(); i++) {
+			if (!(controlloValidità(codici_fiscali_prelevati.get(i))))
+				invalidi.add(codici_fiscali_prelevati.get(i));
+		}
+		return invalidi;
+	}
+
+	public static ArrayList<String> cercaSpaiati(ArrayList<String> codici_fiscali_prelevati, ArrayList<Persona> persone) {
+		ArrayList<String> spaiati = new ArrayList<String>();
+		boolean trovato = false;
+		for (int i = 0; i < codici_fiscali_prelevati.size(); i++, trovato = false) {
+			for (int j = 0; j < persone.size() && !trovato; j++) {
+				if (codici_fiscali_prelevati.equals(persone.get(j).getCodice_fiscale())) {
+					trovato = true;
+				}
+			}
+			if (!trovato)
+				spaiati.add(codici_fiscali_prelevati.get(i));
+		}
+		return spaiati;
 	}
 }

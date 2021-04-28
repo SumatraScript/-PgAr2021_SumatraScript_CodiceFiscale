@@ -25,10 +25,10 @@ public class CodiceFiscaleMain {
 //		System.out.println(CodiceFiscaleUtil.carattereDiControllo(tot));
 		ArrayList<Persona> persone = XmlReader.readerPersona();
 		ArrayList<Comune> comuni = XmlReader.readerComuni();
-		ArrayList<String> codici_fiscali_ottenuti = CodiceFiscaleUtil.creaCodiceFiscale(persone, comuni) ;
+//		ArrayList<String> codici_fiscali_ottenuti = CodiceFiscaleUtil.creaCodiceFiscale(persone, comuni) ;
 		String mycode="ZNGDLN01D20B157C";
 		System.out.println(CodiceFiscaleUtil.controlloValidità(mycode));
-		System.out.println(mycode.substring(9,11));
+		System.out.println(Integer.parseInt(mycode.substring(9,11)));
 //		for(int i=0;i<codici_fiscali.size();i++) {
 //			System.out.println(codici_fiscali.get(i));
 //		}
