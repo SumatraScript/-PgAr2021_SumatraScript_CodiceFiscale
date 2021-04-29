@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class XmlWriter {
+	private static final String ASSENTE = "ASSENTE";
+
 	public static void writerCodiciPersone(ArrayList<Persona> persone, ArrayList<String> codici_fiscali_prelevati, ArrayList<Comune> comuni) {
 		XMLOutputFactory xmlof = null;
 		XMLStreamWriter xmlw = null;
@@ -60,7 +62,7 @@ public class XmlWriter {
 				if (isPresente(persone.get(i).getCodice_fiscale(), codici_fiscali_prelevati))
 					xmlw.writeCharacters(persone.get(i).getCodice_fiscale());
 				else
-					xmlw.writeCharacters("Assente");
+					xmlw.writeCharacters(ASSENTE);
 				xmlw.writeEndElement();
 
 				xmlw.writeCharacters("\n\t\t");
