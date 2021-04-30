@@ -72,7 +72,7 @@ public class XmlWriter {
 			xmlw.writeEndElement();
 
 			ArrayList<String> invalidi = CodiceFiscaleUtil.cercaInvalidi(codici_fiscali_prelevati);
-			ArrayList<String> spaiati = CodiceFiscaleUtil.cercaSpaiati(codici_fiscali_prelevati, persone);
+			ArrayList<String> spaiati = CodiceFiscaleUtil.cercaSpaiati(codici_fiscali_prelevati, persone, invalidi);
 
 			xmlw.writeCharacters("\n\t");
 			xmlw.writeStartElement("invalidi");
